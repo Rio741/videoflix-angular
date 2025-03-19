@@ -1,0 +1,162 @@
+.background-img {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: brightness(0.5);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 108px;
+    width: 90%;
+}
+
+.logo-img {
+    z-index: 999;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    h1 {
+        font-size: 48px;
+        font-weight: 700;
+        z-index: 999;
+        color: white;
+        margin-block-start: 0;
+        margin-block-end: 0;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: 500;
+        z-index: 999;
+        color: white;
+        text-align: center;
+        display: none;
+    }
+
+    h3 {
+        font-size: 18px;
+        font-weight: 400;
+        z-index: 999;
+        color: white;
+        text-align: center;
+    }
+
+    input {
+        z-index: 999;
+        background-color: transparent;
+        border-radius: 40px;
+        border: solid 1px white;
+        color: white;
+        padding: 12px 24px;
+        width: 360px;
+    }
+
+    input::placeholder {
+        color: white;
+    }
+
+    .input-box {
+        display: flex;
+        z-index: 999;
+        gap: 16px;
+    }
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 108px;
+    gap: 48px;
+
+    span {
+        z-index: 999;
+        color: white;
+        cursor: pointer;
+
+        &:hover{
+            color: #005CBB;
+        }
+    }
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+@media screen and (max-width: 1080px) {
+
+    .header {
+        width: 90%;
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+
+    .mat-mdc-card-outlined {
+        width: 90%;
+    }
+
+    .mat-mdc-card-content>:last-child:not(.mat-mdc-card-footer) {
+        width: 100%;
+    }
+
+    .content {
+        h2 {
+            display: flex;
+        }
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    .input-box{
+        flex-direction: column;
+    }
+}
+
+@media screen and (max-width: 420px) {
+
+    .content {
+
+        h1 {
+            font-size: 35px;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin-block-start: 0;
+            margin-block-end: 0.5em;
+        }
+    }
+
+    .logo-img {
+        width: 150px;
+    }
+
+    input {
+        width: auto !important;
+    }
+
+    .input-box{
+        width: 90%;
+    }
+}

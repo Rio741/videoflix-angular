@@ -1,0 +1,12 @@
+<div class="verify-container">
+    <div class="card">
+        <div class="icon">
+            <mat-icon *ngIf="success" class="success-icon">check_circle</mat-icon>
+            <mat-icon *ngIf="!success" class="error-icon">error</mat-icon>
+        </div>
+        <h1>{{ message }}</h1>
+        <button *ngIf="success" mat-flat-button color="primary" (click)="redirectToLogin()">
+            Jetzt einloggen
+        </button>
+    </div>
+</div>

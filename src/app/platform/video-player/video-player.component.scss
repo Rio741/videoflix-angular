@@ -1,0 +1,17 @@
+.video-container {
+    width: 100vw; /* Volle Breite des Viewports */
+    height: 90vh; /* Fast die volle Höhe des Viewports */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black; /* Schwarzer Hintergrund für Kino-Feeling */
+}
+
+.video-js {
+    width: 90%; /* Player nimmt 90% der Breite */
+    height: 90%; /* Player nimmt 90% der Höhe */
+    max-width: 1200px; /* Begrenzung für große Bildschirme */
+    max-height: 700px; /* Maximalhöhe */
+    border-radius: 10px; /* Abgerundete Ecken */
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2); /* Leichter Schatten */
+}

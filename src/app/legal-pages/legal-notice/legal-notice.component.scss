@@ -1,0 +1,70 @@
+.background {
+    position: fixed;
+    background-color: #141414;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+section {
+    position: relative;
+    z-index: 1;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 108px;
+    width: 90%;
+}
+
+.mat-icon {
+    color: white;
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+
+    &:hover{
+        color: #005CBB;
+    }
+}
+
+.material-icons {
+    font-size: 50px;
+}
+
+.content {
+    color: white;
+    padding: 0 96px;
+    padding-bottom: 48px;
+}
+
+.headline {
+    font-size: 48px;
+}
+
+@media screen and (max-width: 1080px) {
+
+    .header {
+        width: 90%;
+        padding: 0;
+        margin: auto;
+    }
+
+    .content {
+        color: white;
+        padding: 0;
+        width: 90%;
+        margin: auto;
+        padding-bottom: 48px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+
+    .logo-img {
+        width: 150px;
+    }
+}

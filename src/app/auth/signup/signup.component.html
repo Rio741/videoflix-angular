@@ -1,0 +1,71 @@
+<img class="background-img" src="assets/img/ticket.jpg" alt="">
+
+<section>
+  <div class="header">
+    <img class="logo-img" src="assets/img/logo.svg" alt="">
+    <button mat-flat-button [routerLink]="['/login']">Log in</button>
+  </div>
+
+  <mat-card appearance="outlined">
+    <mat-card-content class="card-content">
+      <h1>Sign up</h1>
+
+      <!-- Falls Registrierung erfolgreich war, ersetze das Formular durch eine Meldung -->
+      <div *ngIf="emailSent; else signupFormTemplate">
+        <h2 class="bestätigungstitel">✅ Fast geschafft!</h2>
+        <p class="bestätigungstext">Bitte überprüfe deine E-Mails und bestätige deinen Account.</p>
+        <button mat-flat-button (click)="resendEmail()">E-Mail erneut senden</button>
+      </div>
+
+      <!-- Original-Formular wird nur angezeigt, wenn `emailSent` false ist -->
+      <ng-template #signupFormTemplate>
+        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+          <div class="form">
+            <mat-form-field class="input-field" appearance="outline">
+              <input type="email" matInput placeholder="Email Address" formControlName="email">
+              <mat-error *ngIf="email?.hasError('required')">Email is required.</mat-error>
+              <mat-error *ngIf="email?.hasError('email')">Enter a valid email.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="input-field" appearance="outline">
+              <input matInput placeholder="Password" [type]="hidePassword() ? 'password' : 'text'"
+                formControlName="password" />
+              <button mat-icon-button matSuffix (click)="clickEvent('password', $event)">
+                <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="password?.hasError('required')">Password is required.</mat-error>
+              <mat-error *ngIf="password?.hasError('minlength')">Password must be at least 6 characters.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="input-field" appearance="outline">
+              <input matInput placeholder="Confirm Password" [type]="hideConfirmedPassword() ? 'password' : 'text'"
+                formControlName="confirmedPassword" />
+              <button mat-icon-button matSuffix (click)="clickEvent('confirmedPassword', $event)">
+                <mat-icon>{{ hideConfirmedPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="confirmedPassword?.hasError('required')">Confirm password is required.</mat-error>
+              <mat-error *ngIf="confirmedPassword?.hasError('minlength')">Password must be at least 6
+                characters.</mat-error>
+              <mat-error *ngIf="passwordMismatch">Passwords do not match!</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="btn-box">
+            <button mat-flat-button type="submit" [disabled]="!isFormValid()">Get Started</button>
+          </div>
+
+          <!-- Fehlermeldung anzeigen -->
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+        </form>
+      </ng-template>
+
+    </mat-card-content>
+  </mat-card>
+
+  <div class="footer">
+    <span [routerLink]="['/privacyPolicy']">Datenschutz</span>
+    <span [routerLink]="['/legalNotice']">Impressum</span>
+  </div>
+</section>

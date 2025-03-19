@@ -1,0 +1,54 @@
+<img class="background-img" src="assets/img/ticket.jpg" alt="">
+
+<section>
+  <div class="header">
+    <img class="logo-img" src="assets/img/logo.svg" alt="">
+  </div>
+
+  <mat-card appearance="outlined">
+    <mat-card-content class="card-content">
+      <h1>Log in</h1>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form">
+
+          <!-- E-Mail-Feld mit MatError -->
+          <mat-form-field class="input-field" appearance="outline">
+            <input type="email" matInput placeholder="Email Address" formControlName="email">
+            <mat-error *ngIf="email?.hasError('required')">Email is required.</mat-error>
+            <mat-error *ngIf="email?.hasError('email')">Enter a valid email.</mat-error>
+          </mat-form-field>
+
+          <!-- Passwort-Feld mit MatError -->
+          <mat-form-field class="input-field" appearance="outline">
+            <input matInput placeholder="Password" [type]="hide() ? 'password' : 'text'" formControlName="password" />
+            <button mat-icon-button matSuffix (click)="clickEvent($event)">
+              <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="password?.hasError('required')">Password is required.</mat-error>
+            <mat-error *ngIf="password?.hasError('minlength')">Password must be at least 6 characters.</mat-error>
+          </mat-form-field>
+
+          <mat-checkbox formControlName="rememberMe">
+            Remember me
+          </mat-checkbox>
+        </div>
+
+        <div class="btn-box">
+          <button mat-flat-button type="submit" [disabled]="!isFormValid()">Log in</button>
+          <span class="link" [routerLink]="['/forgetPassword']">Forgot password?</span>
+          <div class="sign-up-container">
+            <span class="question-text">New to Videoflix?</span>
+            <span class="link" [routerLink]="['/signup']">Sign Up now</span>
+          </div>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="footer">
+    <span [routerLink]="['/privacyPolicy']">Datenschutz</span>
+    <span [routerLink]="['/legalNotice']">Impressum</span>
+  </div>
+</section>

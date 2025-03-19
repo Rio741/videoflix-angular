@@ -1,0 +1,171 @@
+.background-img {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: brightness(0.5);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 108px;
+    width: 90%;
+}
+
+.logo-img {
+    z-index: 999;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 505px;
+
+    h1 {
+        font-size: 48px;
+        font-weight: 700;
+        color: #005CBB;
+    }
+
+}
+
+.input-field {
+    width: 100%;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+}
+
+.btn-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+}
+
+.sign-up-container {
+    display: flex;
+    gap: 24px;
+}
+
+.link {
+    font-size: 18px;
+    font-weight: 500;
+    color: #005CBB;
+    cursor: pointer;
+}
+
+.question-text {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 108px;
+    gap: 48px;
+
+    span {
+        z-index: 999;
+        color: white;
+        cursor: pointer;
+
+        &:hover{
+            color: #005CBB;
+        }
+    }
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+::ng-deep .mat-mdc-card {
+    border-radius: 48px !important;
+}
+
+.mat-mdc-card-content>:last-child:not(.mat-mdc-card-footer) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+}
+
+.mat-error {
+    font-size: 14px;
+    color: red;
+  }
+
+  @media screen and (max-width: 1080px) {
+
+    .header {
+        width: 90%;
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+
+    .card-content {
+        width: auto;
+
+        h1 {
+            font-size: 48px;
+        }
+    }
+
+    .mat-mdc-card-outlined {
+        width: 90%;
+    }
+
+    .mat-mdc-card-content>:last-child:not(.mat-mdc-card-footer) {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 420px) {
+
+    .card-content {
+
+        h1 {
+            font-size: 35px;
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    .logo-img {
+        width: 150px;
+    }
+
+    .link{
+        font-size: 16px;
+    }
+
+    .question-text{
+        font-size: 16px;
+    }
+
+    .btn-box {
+        gap: 16px;
+        padding: 18px 0;
+    }
+}

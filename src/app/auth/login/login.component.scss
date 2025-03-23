@@ -169,3 +169,13 @@ section {
         padding: 18px 0;
     }
 }
+
+.status-message {
+    text-align: center;
+    color: red;
+  }
+  
+  .status-message.error {
+    color: red;
+  }
+  

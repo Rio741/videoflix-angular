@@ -43,8 +43,11 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token') || sessionStorage.getItem('token');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    console.log("🔑 Abgerufener Token:", token ? token : "⚠️ Kein Token gefunden!");
+    return token;
   }
+  
 
   private storeToken(token: string, rememberMe: boolean): void {
     if (rememberMe) {
@@ -53,6 +56,8 @@ export class AuthService {
       sessionStorage.setItem('token', token);
     }
   }
+
+  
 
   verifyEmail(token: string): Observable<any> {
     return this.http.get(`${this.apiUrl}verify-email/${token}`);
@@ -64,5 +69,9 @@ export class AuthService {
 
   resetPassword(data: { token: string; password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}password-reset-confirm/`, data);
+  }
+
+  resendConfirmationEmail(email: string) {
+    return this.http.post(`${this.apiUrl}resend-confirmation-email/`, { email });
   }
 }

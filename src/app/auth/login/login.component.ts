@@ -37,6 +37,8 @@ export class LoginComponent {
   }
 
   loginForm: FormGroup;
+  statusMessage: string | null = null;
+  isSubmitting = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
@@ -61,16 +63,26 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const { email, password, rememberMe } = this.loginForm.value;
+      this.isSubmitting = true;
 
       this.authService.login({ email, password }, rememberMe).subscribe({
         next: (response) => {
           console.log('Login erfolgreich!', response);
           this.router.navigate(['/home']);
+          this.statusMessage = "✅ Login erfolgreich! Du wirst weitergeleitet.";
+          setTimeout(() => {
+            this.statusMessage = '';
+          }, 3000);
         },
         error: (err) => {
-          console.error('Login fehlgeschlagen', err);
+          this.statusMessage = "❌ Login fehlgeschlagen. Bitte überprüfe deine Eingaben.";
+          this.isSubmitting = false;
+          setTimeout(() => {
+            this.statusMessage = '';
+          }, 3000);
         },
       });
     }
   }
+
 }

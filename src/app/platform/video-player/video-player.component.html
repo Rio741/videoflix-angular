@@ -1,3 +1,13 @@
 <div class="video-container">
-    <video #videoPlayer class="video-js vjs-default-skin" controls></video>
+  <video #videoPlayer class="video-js vjs-default-skin" controls></video>
+
+  <!-- Dropdown für die Qualitätsauswahl -->
+  <div class="quality-selector">
+    <label for="quality">Wähle die Qualität:</label>
+    <select id="quality" (change)="changeQuality($event)">
+      <option *ngFor="let quality of availableQualities; let i = index" [value]="i">
+        {{ quality.height }}p
+      </option>
+    </select>
+  </div>
 </div>

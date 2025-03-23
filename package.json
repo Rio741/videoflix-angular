@@ -21,10 +21,12 @@
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
     "hls.js": "^1.5.20",
+    "ngx-toastr": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "video.js": "^7.21.6",
+    "video.js": "^7.21.7",
     "videojs-hls-quality-selector": "^1.1.4",
+    "videojs-http-source-selector": "^1.1.6",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

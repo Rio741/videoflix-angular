@@ -35,7 +35,7 @@
         </div>
 
         <div class="btn-box">
-          <button mat-flat-button type="submit" [disabled]="!isFormValid()">Log in</button>
+          <button mat-flat-button type="submit" [disabled]="!isFormValid() || isSubmitting">Log in</button>
           <span class="link" [routerLink]="['/forgetPassword']">Forgot password?</span>
           <div class="sign-up-container">
             <span class="question-text">New to Videoflix?</span>
@@ -44,6 +44,9 @@
         </div>
 
       </form>
+      <div *ngIf="statusMessage" class="status-message">
+        {{ statusMessage }}
+      </div>
     </mat-card-content>
   </mat-card>
 

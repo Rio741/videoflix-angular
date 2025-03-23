@@ -34,6 +34,8 @@ export class SignupComponent {
   hideConfirmedPassword = signal(true);
   emailSent = false;
   errorMessage: string | null = null;
+  isSubmitting = false; 
+  statusMessage: string | null = null;
 
 
   clickEvent(field: 'password' | 'confirmedPassword', event: MouseEvent) {
@@ -93,28 +95,44 @@ export class SignupComponent {
   onSubmit() {
     if (this.signupForm.valid) {
       const credentials = this.signupForm.value;
-  
+      this.isSubmitting = true;
+
       this.authService.signup(credentials).subscribe({
         next: () => {
-          this.emailSent = true; // Erfolgsnachricht anzeigen
+          this.emailSent = true;
+          this.isSubmitting = false;
         },
         error: (err) => {
           this.errorMessage = "Registrierung fehlgeschlagen. Bitte überprüfe deine Eingaben.";
+          this.isSubmitting = false;
         },
       });
     }
   }
   
   resendEmail() {
-    // this.authService.resendConfirmationEmail(this.email?.value).subscribe({
-    //   next: () => {
-    //     alert("✅ Bestätigungs-E-Mail wurde erneut gesendet.");
-    //   },
-    //   error: () => {
-    //     alert("❌ Fehler beim erneuten Senden der E-Mail.");
-    //   }
-    // });
-  }
+    if (this.email?.value) {
+      this.isSubmitting = true;
   
+      this.authService.resendConfirmationEmail(this.email.value).subscribe({
+        next: () => {
+          this.statusMessage = "✅ Bestätigungs-E-Mail wurde erneut gesendet.";
+          this.isSubmitting = false;
+  
+          setTimeout(() => {
+            this.statusMessage = null;
+          }, 3000);
+        },
+        error: () => {
+          this.statusMessage = "❌ Fehler beim erneuten Senden der E-Mail.";
+          this.isSubmitting = false;
+  
+          setTimeout(() => {
+            this.statusMessage = null;
+          }, 3000);
+        }
+      });
+    }
+  }
   
 }

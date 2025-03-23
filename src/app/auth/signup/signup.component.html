@@ -14,7 +14,11 @@
       <div *ngIf="emailSent; else signupFormTemplate">
         <h2 class="bestätigungstitel">✅ Fast geschafft!</h2>
         <p class="bestätigungstext">Bitte überprüfe deine E-Mails und bestätige deinen Account.</p>
-        <button mat-flat-button (click)="resendEmail()">E-Mail erneut senden</button>
+        <button mat-flat-button (click)="resendEmail()" [disabled]="isSubmitting">E-Mail erneut senden</button>
+        <div *ngIf="statusMessage" class="status-message">
+          {{ statusMessage }}
+        </div>
+        
       </div>
 
       <!-- Original-Formular wird nur angezeigt, wenn `emailSent` false ist -->
@@ -51,7 +55,7 @@
           </div>
 
           <div class="btn-box">
-            <button mat-flat-button type="submit" [disabled]="!isFormValid()">Get Started</button>
+            <button mat-flat-button type="submit" [disabled]="!isFormValid() || isSubmitting">Get Started</button>
           </div>
 
           <!-- Fehlermeldung anzeigen -->

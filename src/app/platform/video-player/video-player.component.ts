@@ -1,45 +1,45 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
-import videojs from 'video.js';
+import { Component, AfterViewInit, OnDestroy, ElementRef, Input, ViewChild } from '@angular/core';
+import videojs, { VideoJsPlayer } from 'video.js';
 import Hls from 'hls.js';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import 'videojs-http-source-selector'; 
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../services/authService';
 
 @Component({
   selector: 'app-video-player',
-  standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
   templateUrl: './video-player.component.html',
-  styleUrl: './video-player.component.scss'
+  styleUrls: ['./video-player.component.scss']
 })
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
-
-  constructor(private snackBar: MatSnackBar, private http: HttpClient, private authService: AuthService) {}
-
   @Input() videoUrl!: string;
-  @Input() videoId!: number;  // Eindeutige ID für das Video
+  @Input() videoId!: number;
   @Input() isPlaying: boolean = false;
   @ViewChild('videoPlayer', { static: false }) videoElement!: ElementRef;
   player!: videojs.Player;
   hls!: Hls;
   availableQualities: any[] = [];
   selectedQualityIndex: number = -1;
+  dropdownVisible: boolean = false;
   private saveInterval: any;
-  private progressApiUrl = 'http://127.0.0.1:8000/api/watch-progress/';
+  private progressApiUrl = 'https://videoflix.rio-stenger.de/api/watch-progress/';
+
+  constructor(private snackBar: MatSnackBar, private http: HttpClient, private authService: AuthService) {}
 
   ngAfterViewInit(): void {
-    console.log("🔍 Video ID:", this.videoId);
     if (this.videoUrl) {
       this.initPlayer();
-      this.loadProgress(); 
+      this.loadProgress();
     }
   }
-  
 
   private initPlayer(): void {
     const videoElement = this.videoElement.nativeElement;
+
+    this.player = videojs(videoElement, {
+      controls: true,
+      autoplay: false,
+      preload: 'auto',
+    });
 
     if (Hls.isSupported()) {
       this.hls = new Hls();
@@ -48,8 +48,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
       this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
         this.availableQualities = data.levels;
-        console.log('Verfügbare Qualitäten:', this.availableQualities);
-
         if (this.selectedQualityIndex === -1) {
           this.selectedQualityIndex = 0;
           this.hls.startLevel = this.selectedQualityIndex;
@@ -70,58 +68,148 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       });
     }
 
-    // 🔥 Fortschritt alle 5 Sekunden speichern
     this.saveInterval = setInterval(() => {
       this.saveProgress();
     }, 5000);
 
-    // 🔥 Wenn das Video endet, Fortschritt auf 0 setzen
     videoElement.addEventListener('ended', () => this.saveProgress(true));
+
+    this.createQualitySelector();
+    this.createSkipButtons();
   }
 
-  changeQuality(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedIndex = parseInt(selectElement.value, 10);
-  
-    if (this.hls && selectedIndex !== undefined) {
-      this.hls.currentLevel = selectedIndex;
-      this.selectedQualityIndex = selectedIndex;
-  
-      const qualityText = this.availableQualities[selectedIndex]?.height + 'p';
-  
-      this.snackBar.open(`Qualität geändert zu ${qualityText}`, 'Schließen', {
-        duration: 3000,
-        verticalPosition: 'bottom',
-        horizontalPosition: 'center'
-      });
+  private createQualitySelector(): void {
+    const player = this.player;
+    const Button = videojs.getComponent('Button');
+    const qualityButton = new Button(player);
+
+    const icon = document.createElement('mat-icon');
+    icon.innerText = 'quality';
+    qualityButton.el().appendChild(icon);
+
+    qualityButton.controlText('Qualität ändern');
+
+    player.controlBar.addChild(qualityButton);
+
+    // Füge eine Klick-Logik für den Button hinzu
+    qualityButton.on('click', () => {
+      this.toggleQualityDropdown();
+    });
+  }
+
+  // Toggle-Funktion, um das Dropdown anzuzeigen/auszublenden
+  toggleQualityDropdown(): void {
+    this.dropdownVisible = !this.dropdownVisible;
+
+    // Wenn das Dropdown sichtbar wird, dann fügen wir es dynamisch in die Steuerleiste ein
+    if (this.dropdownVisible) {
+      this.createDropdownMenu();
+    } else {
+      this.removeDropdownMenu();
     }
   }
 
+  // Erstelle das Dropdown-Menü
+  createDropdownMenu(): void {
+    const controlBar = this.player.controlBar.el();
+
+    // Dropdown-Menü Container
+    const dropdownMenu = document.createElement('div');
+    dropdownMenu.className = 'quality-dropdown-menu';
+    
+    // Dropdown-Optionen für jede verfügbare Qualität
+    this.availableQualities.forEach((quality, index) => {
+      const option = document.createElement('div');
+      option.className = 'quality-option';
+      option.innerText = `${quality.height}p`;
+      option.onclick = () => {
+        this.selectedQualityIndex = index;
+        this.hls.currentLevel = index;
+        this.snackBar.open(`Qualität geändert zu ${quality.height}p`, 'Schließen', {
+          duration: 3000,
+          verticalPosition: 'bottom',
+          horizontalPosition: 'center',
+        });
+        this.removeDropdownMenu();
+      };
+      dropdownMenu.appendChild(option);
+    });
+
+    // Füge das Dropdown nach dem Qualitätsbutton hinzu
+    controlBar.appendChild(dropdownMenu);
+  }
+
+  // Entferne das Dropdown-Menü
+  removeDropdownMenu(): void {
+    const dropdownMenu = document.querySelector('.quality-dropdown-menu');
+    if (dropdownMenu) {
+      dropdownMenu.remove();
+    }
+  }
+
+  private createSkipButtons(): void {
+    const player = this.player;
+    const Button = videojs.getComponent('Button');
+
+    const skipBackButton = new Button(player);
+    const skipForwardButton = new Button(player);
+
+    const skipBackIcon = document.createElement('span');
+    skipBackIcon.innerHTML = '⏪';
+    skipBackButton.el().appendChild(skipBackIcon);
+    skipBackButton.controlText('10s zurückspringen');
+
+    const skipForwardIcon = document.createElement('span');
+    skipForwardIcon.innerHTML = '⏩';
+    skipForwardButton.el().appendChild(skipForwardIcon);
+    skipForwardButton.controlText('10s vorspulen');
+
+    const controlBar = player.controlBar.el();
+
+    const playButton = player.controlBar.getChild('playToggle');
+    if (playButton) {
+      controlBar.insertBefore(skipBackButton.el(), playButton.el().nextSibling);
+      controlBar.insertBefore(skipForwardButton.el(), skipBackButton.el().nextSibling);
+    }
+
+    skipBackButton.on('click', () => {
+      this.skipTime(-10);
+    });
+
+    skipForwardButton.on('click', () => {
+      this.skipTime(10);
+    });
+  }
+
+  skipTime(seconds: number): void {
+    const videoElement = this.videoElement.nativeElement;
+    videoElement.currentTime += seconds;
+
+    this.snackBar.open(`Gesprungen um ${seconds} Sekunden`, 'Schließen', {
+      duration: 2000,
+      verticalPosition: 'bottom',
+      horizontalPosition: 'center',
+    });
+  }
 
   saveProgress(isFinished: boolean = false): void {
-    console.log("🔍 saveProgress() wurde aufgerufen! isFinished:", isFinished);
-  
     if (!this.videoId || !this.videoElement) {
-      console.warn("⚠️ saveProgress() abgebrochen – fehlende videoId oder videoElement!");
+      console.warn('⚠️ saveProgress() abgebrochen – fehlende videoId oder videoElement!');
       return;
     }
-  
+
     const videoElement = this.videoElement.nativeElement;
     const progress = isFinished ? 0 : (videoElement.currentTime || 0);
-  
-    console.log(`📀 Speichere Fortschritt: ${progress}s für Video-ID: ${this.videoId}`);
-  
+
     const token = this.authService.getToken();
     const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
-  
+
     this.http.post(this.progressApiUrl, { video_id: this.videoId, timestamp: progress }, { headers })
       .subscribe({
         next: () => console.log(`✅ Fortschritt erfolgreich gespeichert: ${progress}s`),
-        error: (err) => console.error('❌ Fehler beim Speichern des Fortschritts:', err)
+        error: (err) => console.error('❌ Fehler beim Speichern des Fortschritts:', err),
       });
   }
-  
-  
 
   loadProgress(): void {
     if (!this.videoId) return;
@@ -133,30 +221,27 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       .subscribe({
         next: (response) => {
           const progress = response.progress ?? 0;
-          if (this.videoElement && this.videoElement.nativeElement && typeof progress === 'number' && progress > 5) {  
+          if (this.videoElement && this.videoElement.nativeElement && typeof progress === 'number' && progress > 5) {
             this.askToResumeProgress(progress);
           }
         },
-        error: (err) => console.error('❌ Fehler beim Laden des Fortschritts:', err)
+        error: (err) => console.error('❌ Fehler beim Laden des Fortschritts:', err),
       });
   }
 
-  // 📌 🔥 Benutzer fragen, ob er fortsetzen möchte (SnackBar mit Buttons)
   private askToResumeProgress(progress: number): void {
     const snackBarRef = this.snackBar.open(
-      `Fortsetzen bei ${Math.floor(progress)}s?`, 
-      'Fortsetzen', 
-      { duration: 5000 } // Schließt sich nach 5 Sekunden
+      `Fortsetzen bei ${Math.floor(progress)}s?`,
+      'Fortsetzen',
+      { duration: 5000 }
     );
 
     snackBarRef.onAction().subscribe(() => {
       if (this.videoElement) {
         this.videoElement.nativeElement.currentTime = progress;
-        console.log(`🔄 Fortschritt geladen und gesetzt: ${progress}s`);
       }
     });
   }
-
 
   ngOnDestroy(): void {
     if (this.player) {

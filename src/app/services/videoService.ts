@@ -8,8 +8,9 @@ import videojs from 'video.js';
   providedIn: 'root'
 })
 export class VideoService implements AfterViewInit, OnDestroy {
-  private apiUrl = 'http://127.0.0.1:8000/api/videos-by-genre/';
-  private progressApiUrl = 'http://127.0.0.1:8000/api/watch-progress/';
+  private apiUrl = 'https://videoflix.rio-stenger.de/api/videos-by-genre/';
+  private progressApiUrl = 'https://videoflix.rio-stenger.de/api/watch-progress/';
+
 
   @Input() videoId!: number;
   @Input() videoUrl!: string;

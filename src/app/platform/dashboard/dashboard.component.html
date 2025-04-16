@@ -1,5 +1,5 @@
 <img class="background-img"
-    [src]="selectedVideo ? 'http://127.0.0.1:8000' + selectedVideo.thumbnail : 'assets/img/ticket.jpg'" alt="">
+    [src]="selectedVideo ? 'https://videoflix.rio-stenger.de' + selectedVideo.thumbnail : 'assets/img/ticket.jpg'" alt="">
 
 <!-- Overlay für besseren Kontrast -->
 <div class="overlay"></div>
@@ -16,7 +16,7 @@
     <input type="text" placeholder="Search..." (input)="onSearch($event)">
     <div class="search-results">
         <div *ngFor="let video of filteredVideos" class="search-item" (click)="onVideoClick(video)">
-            <img [src]="'http://127.0.0.1:8000' + video.thumbnail" [alt]="video.title" class="thumbnail">
+            <img [src]="'https://videoflix.rio-stenger.de' + video.thumbnail" [alt]="video.title" class="thumbnail">
             <span>{{ video.title }}</span>
         </div>
     </div>
@@ -50,7 +50,7 @@
                 <div class="movie-list">
                     <div *ngFor="let video of category.videos" class="search-item">
                         <img class="thumbnail"
-                            [src]="'http://127.0.0.1:8000' + video.thumbnail" [alt]="video.title"
+                            [src]="'https://videoflix.rio-stenger.de' + video.thumbnail" [alt]="video.title"
                             (click)="onVideoClick(video)">
                         <span>{{ video.title }}</span>
                     </div>

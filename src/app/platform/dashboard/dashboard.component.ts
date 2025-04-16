@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit {
   videoUrl: string = '';
 
   searchQuery: string = '';
-filteredVideos: any[] = [];
+  filteredVideos: any[] = [];
 
 onSearch(event: any): void {
   this.searchQuery = event.target.value.toLowerCase();
@@ -55,7 +55,7 @@ onSearch(event: any): void {
   // ✅ Wird erst beim Klicken auf "Play" aufgerufen
   onPlayVideo(): void {
     if (this.selectedVideo) {
-      this.videoUrl = `http://127.0.0.1:8000${this.selectedVideo.hls_master_playlist}`;
+      this.videoUrl = `https://videoflix.rio-stenger.de${this.selectedVideo.hls_master_playlist}`;
 
       this.isVideoPlaying = true;
     }

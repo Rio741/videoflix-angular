@@ -26,7 +26,7 @@ import { AuthService } from '../../services/authService';
     RouterModule
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   hide = signal(true);
@@ -66,15 +66,14 @@ export class LoginComponent {
       this.isSubmitting = true;
 
       this.authService.login({ email, password }, rememberMe).subscribe({
-        next: (response) => {
-          console.log('Login erfolgreich!', response);
+        next: () => {
           this.router.navigate(['/home']);
           this.statusMessage = "✅ Login erfolgreich! Du wirst weitergeleitet.";
           setTimeout(() => {
             this.statusMessage = '';
           }, 3000);
         },
-        error: (err) => {
+        error: () => {
           this.statusMessage = "❌ Login fehlgeschlagen. Bitte überprüfe deine Eingaben.";
           this.isSubmitting = false;
           setTimeout(() => {
@@ -84,5 +83,4 @@ export class LoginComponent {
       });
     }
   }
-
 }

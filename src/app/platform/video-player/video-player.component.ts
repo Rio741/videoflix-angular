@@ -88,20 +88,15 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     qualityButton.el().appendChild(icon);
 
     qualityButton.controlText('Qualität ändern');
-
     player.controlBar.addChild(qualityButton);
 
-    // Füge eine Klick-Logik für den Button hinzu
     qualityButton.on('click', () => {
       this.toggleQualityDropdown();
     });
   }
 
-  // Toggle-Funktion, um das Dropdown anzuzeigen/auszublenden
   toggleQualityDropdown(): void {
     this.dropdownVisible = !this.dropdownVisible;
-
-    // Wenn das Dropdown sichtbar wird, dann fügen wir es dynamisch in die Steuerleiste ein
     if (this.dropdownVisible) {
       this.createDropdownMenu();
     } else {
@@ -109,15 +104,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // Erstelle das Dropdown-Menü
   createDropdownMenu(): void {
     const controlBar = this.player.controlBar.el();
 
-    // Dropdown-Menü Container
     const dropdownMenu = document.createElement('div');
     dropdownMenu.className = 'quality-dropdown-menu';
     
-    // Dropdown-Optionen für jede verfügbare Qualität
     this.availableQualities.forEach((quality, index) => {
       const option = document.createElement('div');
       option.className = 'quality-option';
@@ -135,11 +127,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       dropdownMenu.appendChild(option);
     });
 
-    // Füge das Dropdown nach dem Qualitätsbutton hinzu
     controlBar.appendChild(dropdownMenu);
   }
 
-  // Entferne das Dropdown-Menü
   removeDropdownMenu(): void {
     const dropdownMenu = document.querySelector('.quality-dropdown-menu');
     if (dropdownMenu) {
@@ -193,10 +183,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   }
 
   saveProgress(isFinished: boolean = false): void {
-    if (!this.videoId || !this.videoElement) {
-      console.warn('⚠️ saveProgress() abgebrochen – fehlende videoId oder videoElement!');
-      return;
-    }
+    if (!this.videoId || !this.videoElement) return;
 
     const videoElement = this.videoElement.nativeElement;
     const progress = isFinished ? 0 : (videoElement.currentTime || 0);
@@ -205,10 +192,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
 
     this.http.post(this.progressApiUrl, { video_id: this.videoId, timestamp: progress }, { headers })
-      .subscribe({
-        next: () => console.log(`✅ Fortschritt erfolgreich gespeichert: ${progress}s`),
-        error: (err) => console.error('❌ Fehler beim Speichern des Fortschritts:', err),
-      });
+      .subscribe();
   }
 
   loadProgress(): void {
@@ -225,7 +209,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             this.askToResumeProgress(progress);
           }
         },
-        error: (err) => console.error('❌ Fehler beim Laden des Fortschritts:', err),
+        error: (err) => console.error('Fehler beim Laden des Fortschritts:', err),
       });
   }
 

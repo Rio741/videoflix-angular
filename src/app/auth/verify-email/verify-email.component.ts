@@ -8,12 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-verify-email',
   imports: [MatIconModule, CommonModule],
   templateUrl: './verify-email.component.html',
-  styleUrl: './verify-email.component.scss'
+  styleUrls: ['./verify-email.component.scss']
 })
-
 export class VerifyEmailComponent implements OnInit {
   message: string = 'Verifiziere deine E-Mail...';
-  success: boolean = false; // ✅ Zustand für das Icon
+  success: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -26,13 +25,11 @@ export class VerifyEmailComponent implements OnInit {
 
     if (token) {
       this.authService.verifyEmail(token).subscribe({
-        next: (res) => {
-          console.log('✅ Verifizierung erfolgreich:', res);
+        next: () => {
           this.message = "E-Mail erfolgreich bestätigt! Du kannst dich jetzt einloggen.";
-          setTimeout(() => this.router.navigate(['/login']), 3000); // Automatische Weiterleitung
+          setTimeout(() => this.router.navigate(['/login']), 3000);
         },
-        error: (err) => {
-          console.error('❌ Verifizierung fehlgeschlagen:', err);
+        error: () => {
           this.message = "Verifizierung fehlgeschlagen. Dein Link ist möglicherweise ungültig oder abgelaufen.";
         }
       });

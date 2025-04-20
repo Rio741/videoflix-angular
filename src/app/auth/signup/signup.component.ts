@@ -11,7 +11,6 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/authService';
 
-
 export function passwordMatchValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const password = control.get('password')?.value;
@@ -26,7 +25,7 @@ export function passwordMatchValidator(): ValidatorFn {
   imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, MatCheckboxModule, MatButtonModule,
     MatIconModule, ReactiveFormsModule, RouterModule, MatError, CommonModule],
   templateUrl: './signup.component.html',
-  styleUrl: './signup.component.scss'
+  styleUrls: ['./signup.component.scss']
 })
 
 export class SignupComponent {
@@ -34,18 +33,8 @@ export class SignupComponent {
   hideConfirmedPassword = signal(true);
   emailSent = false;
   errorMessage: string | null = null;
-  isSubmitting = false; 
+  isSubmitting = false;
   statusMessage: string | null = null;
-
-
-  clickEvent(field: 'password' | 'confirmedPassword', event: MouseEvent) {
-    if (field === 'password') {
-      this.hidePassword.set(!this.hidePassword());
-    } else {
-      this.hideConfirmedPassword.set(!this.hideConfirmedPassword());
-    }
-    event.stopPropagation();
-  }
 
   signupForm: FormGroup;
 
@@ -64,7 +53,6 @@ export class SignupComponent {
       { validators: passwordMatchValidator() }
     );
 
-    // E-Mail aus den Query-Params holen und ins Formular setzen
     this.route.queryParams.subscribe(params => {
       if (params['email']) {
         this.signupForm.patchValue({ email: params['email'] });
@@ -102,23 +90,23 @@ export class SignupComponent {
           this.emailSent = true;
           this.isSubmitting = false;
         },
-        error: (err) => {
+        error: () => {
           this.errorMessage = "Registrierung fehlgeschlagen. Bitte überprüfe deine Eingaben.";
           this.isSubmitting = false;
-        },
+        }
       });
     }
   }
-  
+
   resendEmail() {
     if (this.email?.value) {
       this.isSubmitting = true;
-  
+
       this.authService.resendConfirmationEmail(this.email.value).subscribe({
         next: () => {
           this.statusMessage = "✅ Bestätigungs-E-Mail wurde erneut gesendet.";
           this.isSubmitting = false;
-  
+
           setTimeout(() => {
             this.statusMessage = null;
           }, 3000);
@@ -126,7 +114,7 @@ export class SignupComponent {
         error: () => {
           this.statusMessage = "❌ Fehler beim erneuten Senden der E-Mail.";
           this.isSubmitting = false;
-  
+
           setTimeout(() => {
             this.statusMessage = null;
           }, 3000);
@@ -134,5 +122,13 @@ export class SignupComponent {
       });
     }
   }
-  
+
+  clickEvent(field: 'password' | 'confirmedPassword', event: MouseEvent) {
+    if (field === 'password') {
+      this.hidePassword.set(!this.hidePassword());
+    } else {
+      this.hideConfirmedPassword.set(!this.hideConfirmedPassword());
+    }
+    event.stopPropagation();
+  }
 }

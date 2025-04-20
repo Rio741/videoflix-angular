@@ -5,10 +5,8 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-
 export class AuthService {
   private apiUrl = 'https://videoflix.rio-stenger.de/api/auth/';
-
 
   constructor(private http: HttpClient) {}
 
@@ -20,13 +18,11 @@ export class AuthService {
     return new Observable(observer => {
       this.http.post(`${this.apiUrl}login/`, user).subscribe({
         next: (response: any) => {
-          console.log('Login erfolgreich:', response);
           this.storeToken(response.token, rememberMe);
           observer.next(response);
           observer.complete();
         },
         error: (error) => {
-          console.error('Login fehlgeschlagen:', error);
           observer.error(error);
         }
       });
@@ -36,7 +32,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
-    console.log('Logout erfolgreich, Token entfernt.');
   }
 
   isAuthenticated(): boolean {
@@ -44,26 +39,17 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    console.log("🔑 Abgerufener Token:", token ? token : "⚠️ Kein Token gefunden!");
-    return token;
+    return localStorage.getItem('token') || sessionStorage.getItem('token');
   }
-  
-
-  private storeToken(token: string, rememberMe: boolean): void {
-    if (rememberMe) {
-      localStorage.setItem('token', token);
-    } else {
-      sessionStorage.setItem('token', token);
-    }
-  }
-
-  
 
   verifyEmail(token: string): Observable<any> {
     return this.http.get(`${this.apiUrl}verify-email/${token}`);
-  }  
- 
+  }
+
+  resendConfirmationEmail(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}resend-confirmation-email/`, { email });
+  }
+
   sendPasswordResetEmail(emailData: { email: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}password-reset/`, emailData);
   }
@@ -72,7 +58,11 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}password-reset-confirm/`, data);
   }
 
-  resendConfirmationEmail(email: string) {
-    return this.http.post(`${this.apiUrl}resend-confirmation-email/`, { email });
+  private storeToken(token: string, rememberMe: boolean): void {
+    if (rememberMe) {
+      localStorage.setItem('token', token);
+    } else {
+      sessionStorage.setItem('token', token);
+    }
   }
 }

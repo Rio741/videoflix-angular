@@ -1,68 +1,85 @@
-<img class="background-img"
-    [src]="selectedVideo ? 'https://videoflix.rio-stenger.de' + selectedVideo.thumbnail : 'assets/img/ticket.jpg'" alt="">
+<img
+  class="background-img"
+  [src]="selectedVideo ? 'https://videoflix.rio-stenger.de' + selectedVideo.thumbnail : 'assets/img/ticket.jpg'"
+  alt=""
+/>
 
-<!-- Overlay für besseren Kontrast -->
 <div class="overlay"></div>
 
 <div class="header">
-    <img class="logo-img" src="assets/img/logo.svg" alt="">
-    <button mat-flat-button class="logout-btn" (click)="onLogout()">
-        <mat-icon>logout</mat-icon> Log Out
-    </button>
+  <img class="logo-img" src="assets/img/logo.svg" alt="" />
+  <button mat-flat-button class="logout-btn" (click)="onLogout()">
+    <mat-icon>logout</mat-icon> Log Out
+  </button>
 </div>
 
 <div class="slogan" *ngIf="!selectedVideo">
-    <h1>Choose your movie here</h1>
-    <input type="text" placeholder="Search..." (input)="onSearch($event)">
-    <div class="search-results">
-        <div *ngFor="let video of filteredVideos" class="search-item" (click)="onVideoClick(video)">
-            <img [src]="'https://videoflix.rio-stenger.de' + video.thumbnail" [alt]="video.title" class="thumbnail">
-            <span>{{ video.title }}</span>
-        </div>
+  <h1>Choose your movie here</h1>
+  <input type="text" placeholder="Search..." (input)="onSearch($event)" />
+  <div class="search-results">
+    <div
+      *ngFor="let video of filteredVideos"
+      class="search-item"
+      (click)="onVideoClick(video)"
+    >
+      <img
+        [src]="'https://videoflix.rio-stenger.de' + video.thumbnail"
+        [alt]="video.title"
+        class="thumbnail"
+      />
+      <span>{{ video.title }}</span>
     </div>
+  </div>
 </div>
+
 <div class="scroll-container" (click)="scrollToCategory()">
-    <span>Scroll down</span>
-    <mat-icon>keyboard_double_arrow_down</mat-icon>
+  <span>Scroll down</span>
+  <mat-icon>keyboard_double_arrow_down</mat-icon>
 </div>
 
 <div class="hero-section">
-    <div class="details-container" *ngIf="selectedVideo">
-        <h1 class="title">{{ selectedVideo?.title }}</h1>
-        <p class="description">{{ selectedVideo?.description }}</p>
-        <button mat-flat-button class="play-btn" (click)="onPlayVideo()">
-            <mat-icon>play_arrow</mat-icon> Play
-        </button>
-    </div>
+  <div class="details-container" *ngIf="selectedVideo">
+    <h1 class="title">{{ selectedVideo?.title }}</h1>
+    <p class="description">{{ selectedVideo?.description }}</p>
+    <button mat-flat-button class="play-btn" (click)="onPlayVideo()">
+      <mat-icon>play_arrow</mat-icon> Play
+    </button>
+  </div>
 
-    <div class="video-overlay" *ngIf="isVideoPlaying">
-        <mat-icon class="close-btn" (click)="closePlayer()">close</mat-icon>
-        <!-- <app-video-player [videoUrl]="videoUrl" [isPlaying]="isVideoPlaying"></app-video-player> -->
-        <app-video-player [videoUrl]="videoUrl" [videoId]="selectedVideo?.id" [isPlaying]="isVideoPlaying"></app-video-player>
-    </div>
+  <div class="video-overlay" *ngIf="isVideoPlaying">
+    <mat-icon class="close-btn" (click)="closePlayer()">close</mat-icon>
+    <app-video-player
+      [videoUrl]="videoUrl"
+      [videoId]="selectedVideo?.id"
+      [isPlaying]="isVideoPlaying"
+    ></app-video-player>
+  </div>
 </div>
 
 <div class="category-container" id="category-container">
-    <div *ngFor="let category of categories">
-        <ng-container *ngIf="category.videos?.length > 0">
-            <div class="category">
-                <h3 class="category-title">{{ category.genre.name }}</h3>
-                <div class="movie-list">
-                    <div *ngFor="let video of category.videos" class="search-item">
-                        <img class="thumbnail"
-                            [src]="'https://videoflix.rio-stenger.de' + video.thumbnail" [alt]="video.title"
-                            (click)="onVideoClick(video)">
-                        <span>{{ video.title }}</span>
-                    </div>
-                </div>
-            </div>
-        </ng-container>
-    </div>
+  <div *ngFor="let category of categories">
+    <ng-container *ngIf="category.videos?.length > 0">
+      <div class="category">
+        <h3 class="category-title">{{ category.genre.name }}</h3>
+        <div class="movie-list">
+          <div *ngFor="let video of category.videos" class="search-item">
+            <img
+              class="thumbnail"
+              [src]="'https://videoflix.rio-stenger.de' + video.thumbnail"
+              [alt]="video.title"
+              (click)="onVideoClick(video)"
+            />
+            <span>{{ video.title }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
 </div>
 
 <div class="footer">
-    <div class="link-box">
-        <span [routerLink]="['/privacyPolicy']">Datenschutz</span>
-        <span [routerLink]="['/legalNotice']">Impressum</span>
-    </div>
+  <div class="link-box">
+    <span [routerLink]="['/privacyPolicy']">Datenschutz</span>
+    <span [routerLink]="['/legalNotice']">Impressum</span>
+  </div>
 </div>

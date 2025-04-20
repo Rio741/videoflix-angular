@@ -25,14 +25,14 @@ export function passwordMatchValidator(): ValidatorFn {
     MatIconModule, ReactiveFormsModule, RouterModule
   ],
   templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.scss'
+  styleUrls: ['./reset-password.component.scss']
 })
 
 export class ResetPasswordComponent implements OnInit {
   hidePassword = signal(true);
   hideConfirmedPassword = signal(true);
   resetForm: FormGroup;
-  token: string = ''; // ✅ Speichert Token aus URL
+  token: string = '';
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
@@ -53,9 +53,7 @@ export class ResetPasswordComponent implements OnInit {
 
   ngOnInit() {
     this.token = this.route.snapshot.paramMap.get('token') || '';
-    console.log("🔍 Token aus URL:", this.token); // ✅ Debugging
-}
-
+  }
 
   clickEvent(field: 'password' | 'confirmedPassword', event: MouseEvent) {
     if (field === 'password') {
@@ -84,24 +82,21 @@ export class ResetPasswordComponent implements OnInit {
 
   onSubmit() {
     if (this.resetForm.valid) {
-        const data = {
-            token: this.token, // ✅ Token aus URL
-            password: this.resetForm.value.password
-        };
+      const data = {
+        token: this.token,
+        password: this.resetForm.value.password
+      };
 
-        console.log("📡 Sende Anfrage an Backend mit:", data); // ✅ Debugging
-
-        this.authService.resetPassword(data).subscribe({
-            next: () => {
-                this.successMessage = "✅ Passwort erfolgreich zurückgesetzt! Du wirst weitergeleitet...";
-                setTimeout(() => this.router.navigate(['/login']), 3000);
-            },
-            error: (err) => {
-                this.errorMessage = "❌ Fehler beim Zurücksetzen des Passworts. Bitte versuche es erneut.";
-                console.error("Fehler beim Zurücksetzen des Passworts:", err);
-            }
-        });
+      this.authService.resetPassword(data).subscribe({
+        next: () => {
+          this.successMessage = "✅ Passwort erfolgreich zurückgesetzt! Du wirst weitergeleitet...";
+          setTimeout(() => this.router.navigate(['/login']), 3000);
+        },
+        error: (err) => {
+          this.errorMessage = "❌ Fehler beim Zurücksetzen des Passworts. Bitte versuche es erneut.";
+          console.error("Fehler beim Zurücksetzen des Passworts:", err);
+        }
+      });
     }
-}
-
+  }
 }

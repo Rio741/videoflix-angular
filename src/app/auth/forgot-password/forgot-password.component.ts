@@ -19,7 +19,7 @@ import { AuthService } from '../../services/authService';
     ReactiveFormsModule, RouterModule
   ],
   templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.scss'
+  styleUrls: ['./forgot-password.component.scss']
 })
 export class ForgotPasswordComponent {
   loginForm: FormGroup;
@@ -39,17 +39,12 @@ export class ForgotPasswordComponent {
   sendEmail() {
     if (this.loginForm.valid) {
       const emailData = this.loginForm.value;
-      console.log("📩 Sende Passwort-Reset-Anfrage für:", emailData);
-
       this.authService.sendPasswordResetEmail(emailData).subscribe({
         next: () => {
-          this.emailSent = true; // Erfolgsnachricht anzeigen
+          this.emailSent = true;
           this.errorMessage = null;
-          console.log("✅ Passwort-Reset-E-Mail wurde erfolgreich versendet.");
         },
         error: (err) => {
-          console.error("❌ Fehler beim E-Mail-Versand:", err);
-
           if (err.status === 0) {
             this.errorMessage = "🔌 Verbindungsfehler! Bitte überprüfe deine Internetverbindung.";
           } else if (err.status === 400) {
@@ -65,7 +60,6 @@ export class ForgotPasswordComponent {
   }
 
   resendEmail() {
-    console.log("🔄 E-Mail erneut senden wird aufgerufen...");
     this.sendEmail();
   }
 

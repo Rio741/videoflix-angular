@@ -58,7 +58,6 @@
             <button mat-flat-button type="submit" [disabled]="!isFormValid() || isSubmitting">Get Started</button>
           </div>
 
-          <!-- Fehlermeldung anzeigen -->
           <div *ngIf="errorMessage" class="error-message">
             {{ errorMessage }}
           </div>

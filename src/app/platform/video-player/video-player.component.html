@@ -1,3 +1,23 @@
-<div class="video-container">
+<div class="video-container" #container>
   <video #videoPlayer class="video-js vjs-default-skin" controls></video>
+
+  <div class="custom-controls">
+    <button class="control-btn" (click)="rewindVideo()">
+      <mat-icon>fast_rewind</mat-icon>
+    </button>
+
+    <button class="control-btn" (click)="fastForwardVideo()">
+      <mat-icon>fast_forward</mat-icon>
+    </button>
+
+    <button class="control-btn" [matMenuTriggerFor]="qualityMenu">
+      <mat-icon>high_quality</mat-icon>
+    </button>
+
+    <mat-menu #qualityMenu="matMenu">
+      <button mat-menu-item (click)="changeQuality('480')">480p</button>
+      <button mat-menu-item (click)="changeQuality('720')">720p</button>
+      <button mat-menu-item (click)="changeQuality('1080')">1080p</button>
+    </mat-menu>
+  </div>
 </div>

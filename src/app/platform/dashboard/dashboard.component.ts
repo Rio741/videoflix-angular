@@ -43,7 +43,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.categories = categories;
     });
 
-    // Debounced Suchverhalten
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(300)
     ).subscribe(query => this.performSearch(query));

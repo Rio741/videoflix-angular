@@ -1,29 +1,48 @@
-import { Component, AfterViewInit, OnDestroy, ElementRef, Input, ViewChild } from '@angular/core';
-import videojs, { VideoJsPlayer } from 'video.js';
+import {
+  Component,
+  AfterViewInit,
+  OnDestroy,
+  ElementRef,
+  Input,
+  ViewChild,
+  HostListener,
+} from '@angular/core';
+import videojs from 'video.js';
 import Hls from 'hls.js';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../services/authService';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-video-player',
+  standalone: true,
+  imports: [MatIconModule, MatMenuModule, MatButtonModule],
   templateUrl: './video-player.component.html',
-  styleUrls: ['./video-player.component.scss']
+  styleUrls: ['./video-player.component.scss'],
 })
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   @Input() videoUrl!: string;
   @Input() videoId!: number;
   @Input() isPlaying: boolean = false;
   @ViewChild('videoPlayer', { static: false }) videoElement!: ElementRef;
+  @ViewChild('container', { static: false }) containerRef!: ElementRef;
+
   player!: videojs.Player;
   hls!: Hls;
-  availableQualities: any[] = [];
-  selectedQualityIndex: number = -1;
-  dropdownVisible: boolean = false;
   private saveInterval: any;
+  private inactivityTimeout: any;
+  private controlsVisible: boolean = false;
+  private isPaused: boolean = false;
   private progressApiUrl = 'https://videoflix.rio-stenger.de/api/watch-progress/';
 
-  constructor(private snackBar: MatSnackBar, private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private snackBar: MatSnackBar,
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   ngAfterViewInit(): void {
     if (this.videoUrl) {
@@ -35,24 +54,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private initPlayer(): void {
     const videoElement = this.videoElement.nativeElement;
 
-    this.player = videojs(videoElement, {
-      controls: true,
-      autoplay: false,
-      preload: 'auto',
-    });
-
     if (Hls.isSupported()) {
       this.hls = new Hls();
       this.hls.loadSource(this.videoUrl);
       this.hls.attachMedia(videoElement);
-
-      this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        this.availableQualities = data.levels;
-        if (this.selectedQualityIndex === -1) {
-          this.selectedQualityIndex = 0;
-          this.hls.startLevel = this.selectedQualityIndex;
-        }
-      });
 
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
         if (this.isPlaying) {
@@ -73,125 +78,128 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }, 5000);
 
     videoElement.addEventListener('ended', () => this.saveProgress(true));
+    videoElement.addEventListener('pause', () => {
+      this.isPaused = true;
+      this.showControls();
+      this.clearInactivityTimeout();
+    });
 
-    this.createQualitySelector();
-    this.createSkipButtons();
-  }
-
-  private createQualitySelector(): void {
-    const player = this.player;
-    const Button = videojs.getComponent('Button');
-    const qualityButton = new Button(player);
-
-    const icon = document.createElement('mat-icon');
-    icon.innerText = 'quality';
-    qualityButton.el().appendChild(icon);
-
-    qualityButton.controlText('Qualität ändern');
-    player.controlBar.addChild(qualityButton);
-
-    qualityButton.on('click', () => {
-      this.toggleQualityDropdown();
+    videoElement.addEventListener('play', () => {
+      this.isPaused = false;
+      this.resetInactivityTimeout();
     });
   }
 
-  toggleQualityDropdown(): void {
-    this.dropdownVisible = !this.dropdownVisible;
-    if (this.dropdownVisible) {
-      this.createDropdownMenu();
-    } else {
-      this.removeDropdownMenu();
+  changeQuality(resolution: string): void {
+    const levelMap: { [key: string]: number } = {
+      '480': 0,
+      '720': 1,
+      '1080': 2,
+    };
+
+    const levelIndex = levelMap[resolution];
+    if (this.hls && typeof levelIndex === 'number') {
+      this.hls.currentLevel = levelIndex;
+      this.snackBar.open(`Qualität auf ${resolution}p gesetzt`, 'OK', {
+        duration: 3000,
+      });
     }
   }
 
-  createDropdownMenu(): void {
-    const controlBar = this.player.controlBar.el();
-
-    const dropdownMenu = document.createElement('div');
-    dropdownMenu.className = 'quality-dropdown-menu';
-    
-    this.availableQualities.forEach((quality, index) => {
-      const option = document.createElement('div');
-      option.className = 'quality-option';
-      option.innerText = `${quality.height}p`;
-      option.onclick = () => {
-        this.selectedQualityIndex = index;
-        this.hls.currentLevel = index;
-        this.snackBar.open(`Qualität geändert zu ${quality.height}p`, 'Schließen', {
-          duration: 3000,
-          verticalPosition: 'bottom',
-          horizontalPosition: 'center',
-        });
-        this.removeDropdownMenu();
-      };
-      dropdownMenu.appendChild(option);
-    });
-
-    controlBar.appendChild(dropdownMenu);
+  rewindVideo(): void {
+    const video = this.videoElement?.nativeElement;
+    if (video) video.currentTime -= 10;
   }
 
-  removeDropdownMenu(): void {
-    const dropdownMenu = document.querySelector('.quality-dropdown-menu');
-    if (dropdownMenu) {
-      dropdownMenu.remove();
+  fastForwardVideo(): void {
+    const video = this.videoElement?.nativeElement;
+    if (video) video.currentTime += 10;
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboard(event: KeyboardEvent): void {
+    const video = this.videoElement?.nativeElement;
+    if (!video) return;
+
+    switch (event.key) {
+      case 'ArrowRight':
+        video.currentTime += 10;
+        break;
+      case 'ArrowLeft':
+        video.currentTime -= 10;
+        break;
+      case ' ':
+        event.preventDefault();
+        video.paused ? video.play() : video.pause();
+        break;
+      case 'm':
+        video.muted = !video.muted;
+        break;
     }
   }
 
-  private createSkipButtons(): void {
-    const player = this.player;
-    const Button = videojs.getComponent('Button');
-
-    const skipBackButton = new Button(player);
-    const skipForwardButton = new Button(player);
-
-    const skipBackIcon = document.createElement('span');
-    skipBackIcon.innerHTML = '⏪';
-    skipBackButton.el().appendChild(skipBackIcon);
-    skipBackButton.controlText('10s zurückspringen');
-
-    const skipForwardIcon = document.createElement('span');
-    skipForwardIcon.innerHTML = '⏩';
-    skipForwardButton.el().appendChild(skipForwardIcon);
-    skipForwardButton.controlText('10s vorspulen');
-
-    const controlBar = player.controlBar.el();
-
-    const playButton = player.controlBar.getChild('playToggle');
-    if (playButton) {
-      controlBar.insertBefore(skipBackButton.el(), playButton.el().nextSibling);
-      controlBar.insertBefore(skipForwardButton.el(), skipBackButton.el().nextSibling);
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(): void {
+    if (!this.controlsVisible) {
+      this.showControls();
     }
-
-    skipBackButton.on('click', () => {
-      this.skipTime(-10);
-    });
-
-    skipForwardButton.on('click', () => {
-      this.skipTime(10);
-    });
+    if (!this.isPaused) {
+      this.resetInactivityTimeout();
+    }
   }
 
-  skipTime(seconds: number): void {
-    const videoElement = this.videoElement.nativeElement;
-    videoElement.currentTime += seconds;
+  @HostListener('mouseleave', ['$event'])
+  onMouseLeave(): void {
+    if (!this.isPaused) {
+      this.hideControls();
+    }
+  }
 
-    this.snackBar.open(`Gesprungen um ${seconds} Sekunden`, 'Schließen', {
-      duration: 2000,
-      verticalPosition: 'bottom',
-      horizontalPosition: 'center',
-    });
+  private showControls(): void {
+    const controls = this.containerRef.nativeElement.querySelector('.custom-controls');
+    if (controls) {
+      controls.style.opacity = '1';
+      controls.style.transition = 'opacity 0.5s ease-in-out';
+      this.controlsVisible = true;
+    }
+  }
+
+  private hideControls(): void {
+    if (this.isPaused) return;
+    const controls = this.containerRef.nativeElement.querySelector('.custom-controls');
+    if (controls) {
+      controls.style.opacity = '0';
+      controls.style.transition = 'opacity 1.5s ease-in-out';
+      this.controlsVisible = false;
+    }
+  }
+
+  private clearInactivityTimeout(): void {
+    if (this.inactivityTimeout) {
+      clearTimeout(this.inactivityTimeout);
+      this.inactivityTimeout = null;
+    }
+  }
+
+  private resetInactivityTimeout(): void {
+    this.clearInactivityTimeout();
+
+    this.inactivityTimeout = setTimeout(() => {
+      this.hideControls();
+    }, 2000);
   }
 
   saveProgress(isFinished: boolean = false): void {
     if (!this.videoId || !this.videoElement) return;
 
     const videoElement = this.videoElement.nativeElement;
-    const progress = isFinished ? 0 : (videoElement.currentTime || 0);
+    const progress = isFinished ? 0 : videoElement.currentTime || 0;
 
     const token = this.authService.getToken();
     const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
 
-    this.http.post(this.progressApiUrl, { video_id: this.videoId, timestamp: progress }, { headers })
+    this.http
+      .post(this.progressApiUrl, { video_id: this.videoId, timestamp: progress }, { headers })
       .subscribe();
   }
 
@@ -201,11 +209,17 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     const token = this.authService.getToken();
     const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
 
-    this.http.get<{ progress: number }>(`${this.progressApiUrl}${this.videoId}/`, { headers })
+    this.http
+      .get<{ progress: number }>(`${this.progressApiUrl}${this.videoId}/`, { headers })
       .subscribe({
         next: (response) => {
           const progress = response.progress ?? 0;
-          if (this.videoElement && this.videoElement.nativeElement && typeof progress === 'number' && progress > 5) {
+          if (
+            this.videoElement &&
+            this.videoElement.nativeElement &&
+            typeof progress === 'number' &&
+            progress > 5
+          ) {
             this.askToResumeProgress(progress);
           }
         },
@@ -235,5 +249,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       this.hls.destroy();
     }
     clearInterval(this.saveInterval);
+    this.clearInactivityTimeout();
   }
 }

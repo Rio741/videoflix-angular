@@ -1,48 +1,68 @@
 .video-container {
-    width: 99vw; /* Volle Breite des Viewports */
-    height: 100vh; /* Fast die volle Höhe des Viewports */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: black; /* Schwarzer Hintergrund für Kino-Feeling */
+  position: relative;
+  width: 90vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.video-js {
-    width: 90%; /* Player nimmt 90% der Breite */
-    height: 90%; /* Player nimmt 90% der Höhe */
-    max-width: 1200px; /* Begrenzung für große Bildschirme */
-    max-height: 700px; /* Maximalhöhe */
-    border-radius: 10px; /* Abgerundete Ecken */
-    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2); /* Leichter Schatten */
+.video-container .custom-controls {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.vjs-menu-button {
-    color: white;
-  }
-  
-  .vjs-menu-content {
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-  }
-
-  ::ng-deep.quality-dropdown-menu{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    bottom: 36px;
-    position: absolute;
-    right: 6px;
+.video-container:hover .custom-controls {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-::ng-deep.quality-option{
+.video-container video {
+  width: 90%;
+  height: 100%;
+  max-width: 1200px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  color: white;
+  padding: 6px;
+  border-radius: 50%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 20px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+::ng-deep .mat-mdc-menu-panel {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+::ng-deep .mat-mdc-menu-item-text {
+  color: white;
+}
+
+.mat-mdc-menu-item{
+  min-height: 32px;
 
   &:hover{
-    color: aqua;
+    background: rgba(255, 255, 255, 0.2) !important;
   }
 }
-
-::ng-deep.video-js .vjs-control{
-  cursor: pointer;
-}
-  

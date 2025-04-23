@@ -311,6 +311,24 @@
     .title {
         font-size: 56px;
     }
+
+    .scroll-container {
+        bottom: 28px;
+        font-size: 18px;
+
+        .mat-icon {
+            font-size: 38px;
+        }
+    }
+
+    .footer{
+        justify-content: center;
+
+        .link-box{
+            padding-right: 0;
+            gap: 36px;
+        }
+    }
 }
 
 

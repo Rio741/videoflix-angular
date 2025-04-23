@@ -86,7 +86,7 @@
         color: white;
         cursor: pointer;
 
-        &:hover{
+        &:hover {
             color: #005CBB;
         }
     }
@@ -128,8 +128,13 @@ section {
         font-size: 16px;
     }
 
-    .input-box{
+    .input-box {
         flex-direction: column;
+    }
+
+    .signup-btn {
+        width: 38%;
+        align-self: center;
     }
 }
 
@@ -138,7 +143,13 @@ section {
     .content {
 
         h1 {
-            font-size: 35px;
+            font-size: 32px;
+        }
+
+        h2 {
+            margin-block-start: 0;
+            margin-block-end: 0;
+            font-size: 16px;
         }
 
         h3 {
@@ -156,7 +167,7 @@ section {
         width: auto !important;
     }
 
-    .input-box{
+    .input-box {
         width: 90%;
     }
 }

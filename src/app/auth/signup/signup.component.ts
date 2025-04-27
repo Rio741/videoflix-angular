@@ -84,7 +84,7 @@ export class SignupComponent {
     if (this.signupForm.valid) {
       const credentials = this.signupForm.value;
       this.isSubmitting = true;
-
+  
       this.authService.signup(credentials).subscribe({
         next: () => {
           this.emailSent = true;
@@ -93,11 +93,15 @@ export class SignupComponent {
         error: () => {
           this.errorMessage = "Registrierung fehlgeschlagen. Bitte überprüfe deine Eingaben.";
           this.isSubmitting = false;
+  
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 3000);
         }
       });
     }
   }
-
+  
   resendEmail() {
     if (this.email?.value) {
       this.isSubmitting = true;

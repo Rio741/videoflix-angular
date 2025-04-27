@@ -25,6 +25,7 @@ export class ForgotPasswordComponent {
   loginForm: FormGroup;
   emailSent = false;
   errorMessage: string | null = null;
+  isLoading = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
@@ -38,11 +39,13 @@ export class ForgotPasswordComponent {
 
   sendEmail() {
     if (this.loginForm.valid) {
+      this.isLoading = true;
       const emailData = this.loginForm.value;
       this.authService.sendPasswordResetEmail(emailData).subscribe({
         next: () => {
           this.emailSent = true;
           this.errorMessage = null;
+          this.isLoading = false;
         },
         error: (err) => {
           if (err.status === 0) {
@@ -54,6 +57,7 @@ export class ForgotPasswordComponent {
           } else {
             this.errorMessage = "Fehler beim Versenden der E-Mail. Bitte versuche es erneut.";
           }
+          this.isLoading = false;
         },
       });
     }

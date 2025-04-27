@@ -9,9 +9,8 @@
     <mat-card-content class="card-content">
       <h1>Log in</h1>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="form">
-
+      <form [formGroup]="loginForm" class="form" (ngSubmit)="onSubmit()">
+        <div >
           <mat-form-field class="input-field" appearance="outline">
             <input type="email" matInput placeholder="Email Address" formControlName="email">
             <mat-error *ngIf="email?.hasError('required')">Email is required.</mat-error>
@@ -20,7 +19,7 @@
 
           <mat-form-field class="input-field" appearance="outline">
             <input matInput placeholder="Password" [type]="hide() ? 'password' : 'text'" formControlName="password" />
-            <button mat-icon-button matSuffix (click)="clickEvent($event)">
+            <button type="button" mat-icon-button matSuffix (click)="clickEvent($event)">
               <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
             <mat-error *ngIf="password?.hasError('required')">Password is required.</mat-error>
@@ -42,9 +41,10 @@
         </div>
 
       </form>
-      <div *ngIf="statusMessage" class="status-message">
+      <div *ngIf="statusMessage" [ngClass]="{'status-message': true, 'error': isError}">
         {{ statusMessage }}
       </div>
+      
     </mat-card-content>
   </mat-card>
 

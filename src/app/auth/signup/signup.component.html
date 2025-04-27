@@ -34,7 +34,7 @@
             <mat-form-field class="input-field" appearance="outline">
               <input matInput placeholder="Password" [type]="hidePassword() ? 'password' : 'text'"
                 formControlName="password" />
-              <button mat-icon-button matSuffix (click)="clickEvent('password', $event)">
+              <button type="button" mat-icon-button matSuffix (click)="clickEvent('password', $event)">
                 <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
               <mat-error *ngIf="password?.hasError('required')">Password is required.</mat-error>
@@ -44,7 +44,7 @@
             <mat-form-field class="input-field" appearance="outline">
               <input matInput placeholder="Confirm Password" [type]="hideConfirmedPassword() ? 'password' : 'text'"
                 formControlName="confirmedPassword" />
-              <button mat-icon-button matSuffix (click)="clickEvent('confirmedPassword', $event)">
+              <button type="button" mat-icon-button matSuffix (click)="clickEvent('confirmedPassword', $event)">
                 <mat-icon>{{ hideConfirmedPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
               <mat-error *ngIf="confirmedPassword?.hasError('required')">Confirm password is required.</mat-error>

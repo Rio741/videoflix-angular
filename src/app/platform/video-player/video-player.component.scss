@@ -23,12 +23,42 @@
   pointer-events: auto;
 }
 
-.video-container video {
+.video-wrapper {
+  position: relative;
   width: 90%;
-  height: 100%;
   max-width: 1200px;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: auto;
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 6px;
+  transition: background 0.3s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.video-wrapper:hover .close-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.close-btn:hover {
+  background: rgba(255, 0, 0, 0.7);
 }
 
 .control-btn {
@@ -59,10 +89,10 @@
   color: white;
 }
 
-.mat-mdc-menu-item{
+.mat-mdc-menu-item {
   min-height: 32px;
 
-  &:hover{
+  &:hover {
     background: rgba(255, 255, 255, 0.2) !important;
   }
 }

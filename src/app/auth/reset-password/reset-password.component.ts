@@ -35,6 +35,7 @@ export class ResetPasswordComponent implements OnInit {
   token: string = '';
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -82,6 +83,7 @@ export class ResetPasswordComponent implements OnInit {
 
   onSubmit() {
     if (this.resetForm.valid) {
+      this.isLoading = true;
       const data = {
         token: this.token,
         password: this.resetForm.value.password
@@ -95,6 +97,9 @@ export class ResetPasswordComponent implements OnInit {
         error: (err) => {
           this.errorMessage = "❌ Fehler beim Zurücksetzen des Passworts. Bitte versuche es erneut.";
           console.error("Fehler beim Zurücksetzen des Passworts:", err);
+        },
+        complete: () => {
+          this.isLoading = false;
         }
       });
     }

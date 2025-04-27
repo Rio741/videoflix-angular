@@ -6,6 +6,8 @@ import {
   Input,
   ViewChild,
   HostListener,
+  EventEmitter,
+  Output,
 } from '@angular/core';
 import videojs from 'video.js';
 import Hls from 'hls.js';
@@ -37,6 +39,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private controlsVisible: boolean = false;
   private isPaused: boolean = false;
   private progressApiUrl = 'https://videoflix.rio-stenger.de/api/watch-progress/';
+  @Output() closePlayer = new EventEmitter<void>();
 
   constructor(
     private snackBar: MatSnackBar,
@@ -49,6 +52,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       this.initPlayer();
       this.loadProgress();
     }
+  }
+
+  onClose() {
+    this.closePlayer.emit();
   }
 
   private initPlayer(): void {
@@ -157,20 +164,32 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
   private showControls(): void {
     const controls = this.containerRef.nativeElement.querySelector('.custom-controls');
+    const closeBtn = this.containerRef.nativeElement.querySelector('.close-btn');
     if (controls) {
       controls.style.opacity = '1';
       controls.style.transition = 'opacity 0.5s ease-in-out';
       this.controlsVisible = true;
+    }
+    if (closeBtn) {
+      closeBtn.style.opacity = '1';
+      closeBtn.style.transition = 'opacity 0.5s ease-in-out';
+      closeBtn.style.pointerEvents = 'auto';
     }
   }
 
   private hideControls(): void {
     if (this.isPaused) return;
     const controls = this.containerRef.nativeElement.querySelector('.custom-controls');
+    const closeBtn = this.containerRef.nativeElement.querySelector('.close-btn');
     if (controls) {
       controls.style.opacity = '0';
       controls.style.transition = 'opacity 1.5s ease-in-out';
       this.controlsVisible = false;
+    }
+    if (closeBtn) {
+      closeBtn.style.opacity = '0';
+      closeBtn.style.transition = 'opacity 1.5s ease-in-out';
+      closeBtn.style.pointerEvents = 'none';
     }
   }
 

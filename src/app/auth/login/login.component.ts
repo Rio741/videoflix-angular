@@ -39,6 +39,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   statusMessage: string | null = null;
   isSubmitting = false;
+  isError: boolean = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
@@ -64,23 +65,27 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       const { email, password, rememberMe } = this.loginForm.value;
       this.isSubmitting = true;
-
+      this.isError = false;
+  
       this.authService.login({ email, password }, rememberMe).subscribe({
         next: () => {
-          this.router.navigate(['/home']);
           this.statusMessage = "✅ Login erfolgreich! Du wirst weitergeleitet.";
           setTimeout(() => {
+            this.router.navigate(['/home']);
             this.statusMessage = '';
-          }, 3000);
+          }, 2000);
         },
         error: () => {
-          this.statusMessage = "❌ Login fehlgeschlagen. Bitte überprüfe deine Eingaben.";
+          this.statusMessage = "Login fehlgeschlagen. Bitte überprüfe deine Eingaben.";
           this.isSubmitting = false;
+          this.isError = true;
           setTimeout(() => {
             this.statusMessage = '';
+            this.isError = false;
           }, 3000);
         },
       });
     }
   }
+  
 }

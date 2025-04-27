@@ -21,6 +21,7 @@
 .hero-section {
     display: flex;
     align-items: center;
+    justify-content: center;
     height: calc(100vh - 108px);
 }
 
@@ -44,7 +45,6 @@
     width: 40%;
     height: 100%;
     gap: 32px;
-    padding-left: 5%;
 }
 
 .title {
@@ -282,6 +282,13 @@
     }
 }
 
+@media screen and (max-width: 1500px) {
+
+    .details-container {
+        width: 60%;
+        align-items: flex-start;
+    }
+}
 
 
 @media screen and (max-width: 1080px) {
@@ -328,6 +335,10 @@
             padding-right: 0;
             gap: 36px;
         }
+    }
+
+    .details-container {
+        align-items: center;
     }
 }
 

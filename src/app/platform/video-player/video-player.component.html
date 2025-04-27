@@ -1,5 +1,9 @@
 <div class="video-container" #container>
-  <video #videoPlayer class="video-js vjs-default-skin" controls></video>
+
+  <div class="video-wrapper">
+    <video #videoPlayer class="video-js vjs-default-skin" controls></video>
+    <mat-icon class="close-btn" (click)="onClose()">close</mat-icon>
+  </div>
 
   <div class="custom-controls">
     <button class="control-btn" (click)="rewindVideo()">
@@ -20,4 +24,5 @@
       <button mat-menu-item (click)="changeQuality('1080')">1080p</button>
     </mat-menu>
   </div>
+
 </div>

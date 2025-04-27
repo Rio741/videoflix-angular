@@ -119,6 +119,26 @@ section {
   font-size: 14px;
 }
 
+.bestätigungstitel{
+    margin-block-start: 0;
+}
+
+.bestätigungstext{
+    text-align: center;
+}
+
+.error-message{
+    text-align: center;
+    color: red;
+    font-size: 12px;
+    position: absolute;
+    bottom: 95px;
+}
+
+.status-message{
+    padding: 16px;
+}
+
 @media screen and (max-width: 1080px) {
 
     .header {
@@ -162,21 +182,9 @@ section {
     .logo-img {
         width: 150px;
     }
+
+    .error-message{
+        font-size: 10px;
+    }
 }
 
-.bestätigungstitel{
-    margin-block-start: 0;
-}
-
-.bestätigungstext{
-    text-align: center;
-}
-
-.error-message{
-    text-align: center;
-    color: red;
-}
-
-.status-message{
-    padding: 16px;
-}

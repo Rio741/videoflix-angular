@@ -47,11 +47,11 @@
   </div>
 
   <div class="video-overlay" *ngIf="isVideoPlaying">
-    <mat-icon class="close-btn" (click)="closePlayer()">close</mat-icon>
     <app-video-player
       [videoUrl]="videoUrl"
       [videoId]="selectedVideo?.id"
       [isPlaying]="isVideoPlaying"
+      (closePlayer)="closePlayer()">
     ></app-video-player>
   </div>
 </div>
